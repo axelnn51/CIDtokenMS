@@ -20,8 +20,8 @@ services:
     container_name: getcid_api
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
     depends_on:
       - redis
     networks:
@@ -33,8 +33,10 @@ services:
       context: .
       dockerfile: Dockerfile.worker
     container_name: getcid_worker
-    env_file:
-      - .env
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - WORKER_ID=${WORKER_ID:-worker_01}
+      - MAX_RETRIES=${MAX_RETRIES:-3}
     depends_on:
       - redis
     networks:
