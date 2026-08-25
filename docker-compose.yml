@@ -35,6 +35,8 @@ services:
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
       - WORKER_ID=${WORKER_ID:-worker_01}
       - MAX_RETRIES=${MAX_RETRIES:-3}
+      - MS_EMAIL=${MS_EMAIL}
+      - MS_PASSWORD=${MS_PASSWORD}
     depends_on:
       - redis
     networks:

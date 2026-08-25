@@ -41,24 +41,40 @@ class MicrosoftOperation:
             # Wait a few seconds to ensure background requests happen
             await asyncio.sleep(5)
             
-            # 2. Option B: Check LocalStorage / SessionStorage if network interception didn't catch it
-            if not extracted_token:
-                logger.info("No token in network requests. Checking localStorage...")
-                # We can execute JS to pull tokens. E.g., MSAL tokens are often stored here.
-                storage_state = await self.context.storage_state()
-                # Iterate over origins to find tokens or cookies
-                # For this mock/refactor we'll simulate finding it if not found in headers
-                # Real logic would inspect storage_state['origins'] or storage_state['cookies']
-                
-                # Simulated token extraction for the skeleton
-                extracted_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.SIMULATED_TOKEN..."
-                token_type = "LocalStorage"
-                
+            # Extract EVERYTHING from the browser context since we don't know the specific target
+            logger.info("Extracting all cookies and storage state...")
+            storage_state = await self.context.storage_state()
+            
+            # Extract Cookies
+            cookies = storage_state.get('cookies', [])
+            
+            # Extract Local Storage from origins
+            origins = storage_state.get('origins', [])
+            local_storage = {}
+            for origin in origins:
+                ls_items = origin.get('localStorage', [])
+                if ls_items:
+                    local_storage[origin['origin']] = {item['name']: item['value'] for item in ls_items}
+            
+            # Combine into a final result payload
+            extracted_data = {
+                "cookies": cookies,
+                "local_storage": local_storage,
+                "network_tokens": [] # If any were caught by interceptor
+            }
+
             if extracted_token:
-                logger.info(f"Token extraction successful ({token_type}).")
-                return JobResult(token=extracted_token, token_type=token_type)
-            else:
-                return JobResult(error_type="TOKEN_NOT_FOUND", error_message="Could not extract token from network or storage.")
+                extracted_data["network_tokens"].append({
+                    "type": token_type,
+                    "value": extracted_token
+                })
+                
+            # Log success
+            logger.info(f"Extraction successful! Found {len(cookies)} cookies and {len(local_storage)} origins with localStorage.")
+            
+            # Return the massive JSON object so the user can parse it on their backend
+            import json
+            return JobResult(token=json.dumps(extracted_data), token_type="FullDump")
 
         except Exception as e:
             logger.error(f"Error during token extraction: {e}")
