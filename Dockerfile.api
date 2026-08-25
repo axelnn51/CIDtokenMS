@@ -9,6 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy API code and shared models
 COPY api/ /app/api/
 COPY worker/jobs/ /app/worker/jobs/
+COPY frontend/ /app/frontend/
 
 ENV PYTHONPATH=/app
 
