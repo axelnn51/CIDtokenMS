@@ -26,6 +26,10 @@ services:
     networks:
       - getcid_net
     restart: unless-stopped
+    volumes:
+      - ./api:/app/api
+      - ./worker:/app/worker
+      - ./frontend:/app/frontend
 
   worker_v3:
     build:
@@ -43,6 +47,7 @@ services:
       - getcid_net
     restart: unless-stopped
     volumes:
+      - ./worker:/app/worker
       - ./browser_profile:/opt/getcid_data/browser_profile
 
 volumes:
