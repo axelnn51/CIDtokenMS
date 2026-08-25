@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Extractor | Antigravity</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <main class="dashboard">
+        <header class="dashboard-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="url(#paint1_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="url(#paint2_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="paint0_linear" x1="2" y1="2" x2="22" y2="12" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#4F46E5"/>
+                            <stop offset="1" stop-color="#EC4899"/>
+                        </linearGradient>
+                        <linearGradient id="paint1_linear" x1="2" y1="17" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#4F46E5"/>
+                            <stop offset="1" stop-color="#EC4899"/>
+                        </linearGradient>
+                        <linearGradient id="paint2_linear" x1="2" y1="12" x2="22" y2="17" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#4F46E5"/>
+                            <stop offset="1" stop-color="#EC4899"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>Microsoft Extractor</h1>
+            </div>
+            <div class="status-badge" id="api-status">API Online</div>
+        </header>
+
+        <section class="extraction-card glass-panel">
+            <div class="card-content">
+                <h2>Extract Credentials</h2>
+                <p>One-click automated login and token extraction for Visual Studio.</p>
+                
+                <div class="action-area">
+                    <button id="extract-btn" class="primary-btn">
+                        <span class="btn-text">Start Extraction</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="status-container" class="status-container hidden">
+                <div class="progress-track">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <p id="status-text" class="status-text">Waking up bot...</p>
+                
+                <!-- Live Logs Terminal -->
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="terminal-title">worker_01 logs</span>
+                    </div>
+                    <div id="terminal-content" class="terminal-content">
+                        <div class="log-line">> Ready. Waiting for job...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="results-section" class="results-section hidden glass-panel">
+            <div class="results-header">
+                <h2>Extraction Results</h2>
+                <button id="copy-btn" class="secondary-btn">Copy JSON</button>
+            </div>
+            <div class="code-container">
+                <pre><code id="result-code"></code></pre>
+            </div>
+        </section>
+    </main>
+
+    <script src="/app.js"></script>
+</body>
+</html>

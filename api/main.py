@@ -1,17 +1,33 @@
 import os
+import sys
 import uuid
 import time
 from fastapi import FastAPI, HTTPException, status
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import redis.asyncio as redis
 
 # Reusing worker models for simplicity (in a real monorepo they might be in a shared package)
-import sys
-import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "worker"))
 from jobs.models import Job, JobPayload, JobStatus
 
 app = FastAPI(title="GETCID API")
+
+# Serve the beautiful frontend
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "..", "frontend")), name="static")
+
+@app.get("/")
+async def root_ui():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html"))
+
+@app.get("/index.css")
+async def css():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "index.css"))
+
+@app.get("/app.js")
+async def js():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "..", "frontend", "app.js"))
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 redis_client = redis.from_url(REDIS_URL)
