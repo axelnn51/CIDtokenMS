@@ -17,7 +17,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.api
-    container_name: getcid_api
     ports:
       - "8001:8000"
     environment:
@@ -32,7 +31,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
-    container_name: getcid_worker
     environment:
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
       - WORKER_ID=${WORKER_ID:-worker_01}
