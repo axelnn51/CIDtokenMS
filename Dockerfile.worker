@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/playwright/python:v1.44.0-jammy
+
+WORKDIR /app
+
+# Copy dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy worker code
+COPY worker/ /app/worker/
+
+ENV PYTHONPATH=/app
+
+# Run the main worker script
+CMD ["python", "worker/main.py"]

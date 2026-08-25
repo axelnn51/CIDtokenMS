@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: getcid_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - getcid_net
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: getcid_api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - getcid_net
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: getcid_worker
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    networks:
+      - getcid_net
+    restart: unless-stopped
+    volumes:
+      - ./browser_profile:/opt/getcid_data/browser_profile
+
+volumes:
+  redis_data:
+
+networks:
+  getcid_net:
+    driver: bridge
