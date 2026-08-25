@@ -13,7 +13,7 @@ services:
       - getcid_net
     restart: unless-stopped
 
-  api_v2:
+  api_v3:
     build:
       context: .
       dockerfile: Dockerfile.api
@@ -27,7 +27,7 @@ services:
       - getcid_net
     restart: unless-stopped
 
-  worker_v2:
+  worker_v3:
     build:
       context: .
       dockerfile: Dockerfile.worker
