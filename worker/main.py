@@ -5,11 +5,13 @@ from redis.asyncio import Redis
 
 from jobs.consumer import JobConsumer
 from jobs.lock import WorkerLease
+from diagnostics.logger import setup_redis_logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 async def main():
+    setup_redis_logging()
     logger.info("Starting GETCID Microsoft Operation Worker...")
     
     redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
