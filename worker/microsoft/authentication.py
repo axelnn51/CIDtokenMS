@@ -40,7 +40,7 @@ class MicrosoftAuthenticator:
             if await email_input.is_visible(timeout=5000):
                 logger.info("Entering email...")
                 await email_input.fill(self.email)
-                await page.locator("input[type='submit']").click()
+                await email_input.press("Enter")
                 await page.wait_for_load_state("networkidle")
             
             # Enter Password
@@ -48,7 +48,7 @@ class MicrosoftAuthenticator:
             if await password_input.is_visible(timeout=10000):
                 logger.info("Entering password...")
                 await password_input.fill(self.password)
-                await page.locator("input[type='submit']").click()
+                await password_input.press("Enter")
                 await page.wait_for_load_state("networkidle")
             
             # Handle "Stay signed in?" prompt
