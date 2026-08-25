@@ -18,7 +18,8 @@ class ChromiumController:
             '--disable-blink-features=AutomationControlled',
             '--disable-infobars',
             '--no-sandbox',
-            '--disable-setuid-sandbox'
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage'
         ]
         
         self.browser_context = await self.playwright.chromium.launch_persistent_context(
