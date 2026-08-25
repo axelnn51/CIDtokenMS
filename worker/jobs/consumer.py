@@ -90,7 +90,7 @@ class JobConsumer:
                 await self.state_manager.update_state(job, JobStatus.EXECUTING)
                 operation = MicrosoftOperation(context)
                 
-                result = await operation.execute_getcid(job.payload.installation_id)
+                result = await operation.execute_token_extraction(job.payload.target_url)
                 
                 if result.error_type:
                     await self.state_manager.update_state(job, JobStatus.FAILED_PERMANENTLY, result=result)

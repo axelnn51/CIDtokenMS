@@ -18,7 +18,8 @@ class JobStatus(str, Enum):
     TIMEOUT = "TIMEOUT"
 
 class JobPayload(BaseModel):
-    installation_id: str = Field(..., max_length=100)
+    # Depending on the target, you might want to pass an account_id, environment, or just leave it empty
+    target_url: Optional[str] = "https://my.visualstudio.com/"
 
 class JobMetrics(BaseModel):
     created_at: float = Field(default_factory=time.time)
@@ -26,7 +27,8 @@ class JobMetrics(BaseModel):
     completed_at: Optional[float] = None
 
 class JobResult(BaseModel):
-    cid: Optional[str] = None
+    token: Optional[str] = None
+    token_type: Optional[str] = None
     error_type: Optional[str] = None
     error_message: Optional[str] = None
 

@@ -16,10 +16,10 @@ app = FastAPI(title="GETCID API")
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 redis_client = redis.from_url(REDIS_URL)
 
-class GetCidRequest(BaseModel):
-    installation_id: str
+class GetTokenRequest(BaseModel):
+    target_url: str = "https://my.visualstudio.com/"
 
-class GetCidResponse(BaseModel):
+class GetTokenResponse(BaseModel):
     job_id: str
     status: str
 
@@ -28,14 +28,14 @@ async def startup_event():
     # Ping Redis to ensure connection
     await redis_client.ping()
 
-@app.post("/api/v1/getcid", status_code=status.HTTP_202_ACCEPTED, response_model=GetCidResponse)
-async def create_job(request: GetCidRequest):
-    job_id = f"cid_req_{uuid.uuid4().hex[:8]}"
+@app.post("/api/v1/get-token", status_code=status.HTTP_202_ACCEPTED, response_model=GetTokenResponse)
+async def create_job(request: GetTokenRequest):
+    job_id = f"token_req_{uuid.uuid4().hex[:8]}"
     
     # Create the job object
     job = Job(
         job_id=job_id,
-        payload=JobPayload(installation_id=request.installation_id)
+        payload=JobPayload(target_url=request.target_url)
     )
     
     # Save job data
@@ -45,7 +45,7 @@ async def create_job(request: GetCidRequest):
     # Push to stream
     await redis_client.xadd("jobs:stream", {"job_id": job_id})
     
-    return GetCidResponse(job_id=job_id, status=JobStatus.PENDING.value)
+    return GetTokenResponse(job_id=job_id, status=JobStatus.PENDING.value)
 
 @app.get("/api/v1/jobs/{job_id}")
 async def get_job_status(job_id: str):

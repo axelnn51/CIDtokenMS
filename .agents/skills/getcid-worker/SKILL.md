@@ -6,9 +6,9 @@ description: "SYSTEM SPECIFICATION & ARCHITECTURE: GETCID — Microsoft Operatio
 # SYSTEM SPECIFICATION & ARCHITECTURE: GETCID — Microsoft Operation Worker
 
 ## 0. CONTEXTO DEL PROYECTO Y OBJETIVO
-Este es un sistema distribuido y asíncrono en Python para automatizar la obtención de un "CID" desde `visualsupport.microsoft.com`.
+Este es un sistema distribuido y asíncrono en Python para automatizar la extracción de **Tokens de Autenticación (JWT, Bearer, MSAL)** desde portales de Microsoft (como `visualstudio.com`).
 
-**El cambio de paradigma central:** Este NO es un scraper para robar tokens, extraer firmas DPoP o almacenar material criptográfico para uso externo. Es un **Worker Transaccional** que ejecuta una operación completa y autorizada de principio a fin dentro del contexto seguro de un navegador real (Chromium), devolviendo únicamente el resultado final al backend.
+**El cambio de paradigma central:** Este sistema está diseñado para iniciar una sesión de navegador real (Chromium), superar barreras de seguridad de forma humana/automatizada y capturar los tokens interceptando las peticiones de red o inspeccionando el `localStorage`/Cookies. El Worker devuelve el token extraído al backend para su uso externo.
 
 El sistema debe ser resiliente, observable y capaz de recuperarse ante errores de red, expiración de sesión, cambios del DOM y desafíos de autenticación (CAPTCHAs).
 
@@ -24,8 +24,8 @@ El sistema se compone de 3 piezas estrictamente separadas que se comunican vía 
 ---
 
 ## 2. REGLAS INQUEBRANTABLES (HARD RULES)
-- **Cero Extracción (No Stealing):** Prohibido almacenar tokens, cookies, claves privadas o JWTs fuera de la sesión del navegador.
-- **Cero MITM:** Prohibido usar proxies interceptores (ej. `selenium-wire`). Todo será con Playwright nativo. CDP solo si la API nativa es insuficiente.
+- **Extracción Sigilosa:** El objetivo principal es obtener el token sin ser detectado.
+- **Cero MITM (Proxies):** Prohibido usar proxies interceptores externos (ej. `selenium-wire`). La intercepción de red debe hacerse con la API nativa de Playwright (`page.on('request')`). CDP solo si la API nativa es insuficiente.
 - **Concurrencia Estricta (1 Worker = 1 Job):** Inicialmente, solo 1 Worker ejecutará 1 Job a la vez, usando un perfil de navegador persistente. Debe usar un sistema de *Leasing/Lock* atómico en Redis con un hilo de *heartbeat* para mantener exclusividad.
 - **Garantía de Cleanup (try...finally):** Ninguna excepción, timeout o crash debe dejar un Chromium zombie o un *lock* huérfano. Todo debe cerrarse de forma segura.
 - **Autonomía al 100% (con fallback manual):** El sistema intentará resolver los desafíos (CAPTCHA/Azure WAF) de manera **100% automática** (por ejemplo, mediante proveedores de resolución u otras técnicas autónomas). Si el desafío no se puede resolver automáticamente, o si el usuario envía un comando explícito para intervención, el sistema pasará a `CHALLENGE_REQUIRED`, pausará de forma segura y esperará intervención manual vía VNC/SSH.
