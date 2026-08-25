@@ -72,3 +72,11 @@ async def get_job_status(job_id: str):
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+@app.get("/api/v1/logs")
+async def get_worker_logs(limit: int = 50):
+    """
+    Fetch the latest logs from the worker(s) directly from Redis.
+    """
+    logs = await redis_client.lrange("worker:logs", 0, limit - 1)
+    return {"logs": [log.decode("utf-8") for log in logs]}
