@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile.api
     container_name: getcid_api
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
     depends_on:
